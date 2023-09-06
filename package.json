@@ -1,6 +1,7 @@
 {
   "name": "@rolster/typescript-coopplins-typeorm",
   "version": "4.0.0",
+  "description": "Package containing clean architecture implementations with Typeorm.",
   "module": "dist/esm/index.js",
   "main": "dist/cjs/lib.cjs.js",
   "unpkg": "dist/es/lib.js",

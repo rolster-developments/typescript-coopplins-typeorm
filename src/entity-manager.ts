@@ -1,4 +1,7 @@
-import { EntityManager, XofttionEntityManager } from '@rolster/typescript-hexagonal';
+import {
+  EntityManager,
+  XofttionEntityManager
+} from '@rolster/typescript-hexagonal';
 import { QueryRunner } from 'typeorm';
 import { TypeormEntityDataSource } from './datasource';
 
