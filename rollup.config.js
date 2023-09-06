@@ -19,12 +19,11 @@ export default {
     }
   ],
   external: [
-    '@rolster/typescript-invertly',
+    '@rolster/typescript-hexagonal',
     '@rolster/typescript-utils',
     'dotenv',
-    'express',
-    'express-validator',
-    'reflect-metadata'
+    'mysql2',
+    'typeorm'
   ],
   plugins: [
     resolve(),
