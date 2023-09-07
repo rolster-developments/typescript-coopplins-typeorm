@@ -1,6 +1,6 @@
 import {
   EntityManager,
-  XofttionEntityManager
+  RolsterEntityManager
 } from '@rolster/typescript-hexagonal';
 import { QueryRunner } from 'typeorm';
 import { TypeormEntityDataSource } from './datasource';
@@ -9,8 +9,8 @@ export abstract class TypeormEntityManager extends EntityManager {
   abstract setRunner(runner: QueryRunner): void;
 }
 
-export class XofttionTypeormEntityManager
-  extends XofttionEntityManager
+export class RolsterTypeormEntityManager
+  extends RolsterEntityManager
   implements TypeormEntityManager
 {
   constructor(private typeormDataSource: TypeormEntityDataSource) {

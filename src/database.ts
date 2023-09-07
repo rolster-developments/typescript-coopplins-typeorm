@@ -7,7 +7,7 @@ export abstract class TypeormEntityDatabase extends EntityDatabase {
   abstract setRunner(runner: QueryRunner): void;
 }
 
-export class XofttionTypeormEntityDatabase implements TypeormEntityDatabase {
+export class RolsterTypeormEntityDatabase implements TypeormEntityDatabase {
   private runner?: QueryRunner;
 
   public setRunner(runner: QueryRunner): void {

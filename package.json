@@ -1,6 +1,6 @@
 {
   "name": "@rolster/typescript-coopplins-typeorm",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Package containing clean architecture implementations with Typeorm.",
   "module": "dist/esm/index.js",
   "main": "dist/cjs/lib.cjs.js",
@@ -20,7 +20,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@rolster/typescript-hexagonal": "^4.0.0",
+    "@rolster/typescript-hexagonal": "^4.0.1",
     "@rolster/typescript-utils": "^4.0.1",
     "dotenv": "^16.0.2",
     "mysql2": "^2.3.3",

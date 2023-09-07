@@ -13,7 +13,7 @@ export abstract class TypeormEntityDataSource extends EntityDataSource {
   abstract setRunner(runner: QueryRunner): void;
 }
 
-export class XofttionTypeormEntityDataSource
+export class RolsterTypeormEntityDataSource
   implements TypeormEntityDataSource
 {
   private runner?: QueryRunner;
