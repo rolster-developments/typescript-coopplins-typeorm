@@ -21,7 +21,7 @@ class TypeormSql {
     return this.dataSource?.createQueryRunner();
   }
 
-  public getRepository<T extends ObjectLiteral>(
+  public repository<T extends ObjectLiteral>(
     target: EntityTarget<T>
   ): Undefined<Repository<T>> {
     return this.dataSource?.getRepository<T>(target);

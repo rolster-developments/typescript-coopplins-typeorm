@@ -6,13 +6,13 @@ export default {
   input: 'dist/esm/index.js',
   output: [
     {
-      file: 'dist/es/lib.js',
+      file: 'dist/es/index.js',
       format: 'es',
       sourcemap: true,
       inlineDynamicImports: true
     },
     {
-      file: 'dist/cjs/lib.cjs.js',
+      file: 'dist/cjs/index.js',
       format: 'cjs',
       sourcemap: true,
       inlineDynamicImports: true
@@ -21,13 +21,11 @@ export default {
   external: [
     '@rolster/typescript-hexagonal',
     '@rolster/typescript-utils',
-    'dotenv',
-    'mysql2',
     'typeorm'
   ],
   plugins: [
-    resolve(),
     commonjs(),
+    resolve(),
     typescript({
       tsconfig: './tsconfig.json',
       declaration: true,
