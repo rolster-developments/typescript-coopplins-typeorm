@@ -6,11 +6,11 @@ import {
   Repository
 } from 'typeorm';
 
-class TypeormSql {
+class VinegarTypeormSql {
   private dataSource?: DataSource;
 
-  public setDataSource(datasource: DataSource): void {
-    this.dataSource = datasource;
+  public setDataSource(dataSource: DataSource): void {
+    this.dataSource = dataSource;
   }
 
   public getDataSource(): Undefined<DataSource> {
@@ -28,4 +28,4 @@ class TypeormSql {
   }
 }
 
-export const typeormSql = new TypeormSql();
+export const VinegarSql = new VinegarTypeormSql();

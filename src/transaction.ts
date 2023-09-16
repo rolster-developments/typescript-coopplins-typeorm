@@ -1,38 +1,12 @@
-import { promisesZip } from '@rolster/typescript-utils';
-import { typeormSql } from './sql-manager';
+import { VinegarSql } from './sql-manager';
 
-export function transaction<T = unknown>(
-  callback: () => Promise<T | void>
-): Promise<T | void> {
-  const runner = typeormSql.createRunner();
+type Callback<T> = () => Promise<T | void>;
+type Result<T> = Promise<T | void>;
 
-  if (!runner) {
-    return Promise.resolve();
-  }
-
-  return promisesZip([
-    () => runner.connect(),
-    () => runner.startTransaction(),
-    () => callback(),
-    () => runner.commitTransaction()
-  ])
-    .then(([_c, _t, result]) => {
-      return result as T;
-    })
-    .catch((error) => {
-      return runner.rollbackTransaction().finally(() => {
-        throw error;
-      });
-    })
-    .finally(() => {
-      runner.release();
-    });
-}
-
-export async function transactionAsync<T = unknown>(
-  callback: () => Promise<T | void>
-): Promise<T | void> {
-  const runner = typeormSql.createRunner();
+export const transaction = async <T = unknown>(
+  callback: Callback<T>
+): Result<T> => {
+  const runner = VinegarSql.createRunner();
 
   if (!runner) {
     return Promise.resolve();
@@ -54,4 +28,4 @@ export async function transactionAsync<T = unknown>(
   } finally {
     await runner.release();
   }
-}
+};

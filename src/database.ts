@@ -1,7 +1,7 @@
-import { EntityDatabase } from '@rolster/typescript-hexagonal';
+import { EntityDatabase } from '@rolster/vinegar';
 import { QueryRunner } from 'typeorm';
 
-type RunnerCallback = (runner: QueryRunner) => Promise<void>;
+type ResolveRunner = (runner: QueryRunner) => Promise<void>;
 
 export abstract class TypeormEntityDatabase extends EntityDatabase {
   abstract setRunner(runner: QueryRunner): void;
@@ -15,26 +15,26 @@ export class RolsterTypeormEntityDatabase implements TypeormEntityDatabase {
   }
 
   public connect(): Promise<void> {
-    return this.runnerCallback((runner) => runner.connect());
+    return this.resolver((runner) => runner.connect());
   }
 
   public disconnect(_?: boolean): Promise<void> {
-    return this.runnerCallback((runner) => runner.release());
+    return this.resolver((runner) => runner.release());
   }
 
   public transaction(): Promise<void> {
-    return this.runnerCallback((runner) => runner.startTransaction());
+    return this.resolver((runner) => runner.startTransaction());
   }
 
   public commit(): Promise<void> {
-    return this.runnerCallback((runner) => runner.commitTransaction());
+    return this.resolver((runner) => runner.commitTransaction());
   }
 
   public rollback(): Promise<void> {
-    return this.runnerCallback((runner) => runner.rollbackTransaction());
+    return this.resolver((runner) => runner.rollbackTransaction());
   }
 
-  private runnerCallback(callback: RunnerCallback): Promise<void> {
-    return this.runner ? callback(this.runner) : Promise.resolve();
+  private resolver(resolve: ResolveRunner): Promise<void> {
+    return this.runner ? resolve(this.runner) : Promise.resolve();
   }
 }

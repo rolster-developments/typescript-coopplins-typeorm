@@ -1,7 +1,4 @@
-import {
-  EntityManager,
-  RolsterEntityManager
-} from '@rolster/typescript-hexagonal';
+import { EntityManager, RolsterEntityManager } from '@rolster/vinegar';
 import { QueryRunner } from 'typeorm';
 import { TypeormEntityDataSource } from './datasource';
 

@@ -6,23 +6,19 @@ export default {
   input: 'dist/esm/index.js',
   output: [
     {
-      file: 'dist/es/index.js',
-      format: 'es',
-      sourcemap: true,
-      inlineDynamicImports: true
-    },
-    {
       file: 'dist/cjs/index.js',
       format: 'cjs',
       sourcemap: true,
       inlineDynamicImports: true
+    },
+    {
+      file: 'dist/es/index.js',
+      format: 'es',
+      sourcemap: true,
+      inlineDynamicImports: true
     }
   ],
-  external: [
-    '@rolster/typescript-hexagonal',
-    '@rolster/typescript-utils',
-    'typeorm'
-  ],
+  external: ['@rolster/helpers-advanced', '@rolster/vinegar', 'typeorm'],
   plugins: [
     commonjs(),
     resolve(),
@@ -30,7 +26,7 @@ export default {
       tsconfig: './tsconfig.json',
       declaration: true,
       declarationDir: 'dist',
-      include: ['node_modules/@rolster/typescript-types/index.d.ts']
+      include: ['node_modules/@rolster/types/index.d.ts']
     })
   ]
 };

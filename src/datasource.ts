@@ -4,18 +4,16 @@ import {
   Model,
   EntityDataSource,
   Procedure
-} from '@rolster/typescript-hexagonal';
+} from '@rolster/vinegar';
 import { EntityManager, QueryRunner } from 'typeorm';
 
-type ManagerCallback = (entities: EntityManager) => Promise<void>;
+type ResolveManager = (entities: EntityManager) => Promise<void>;
 
 export abstract class TypeormEntityDataSource extends EntityDataSource {
   abstract setRunner(runner: QueryRunner): void;
 }
 
-export class RolsterTypeormEntityDataSource
-  implements TypeormEntityDataSource
-{
+export class RolsterTypeormEntityDataSource implements TypeormEntityDataSource {
   private runner?: QueryRunner;
 
   public setRunner(runner: QueryRunner): void {
@@ -23,13 +21,13 @@ export class RolsterTypeormEntityDataSource
   }
 
   public insert(model: Model): Promise<void> {
-    return this.managerCallback((manager) =>
+    return this.resolver((manager) =>
       manager.save(model).then(() => Promise.resolve())
     );
   }
 
   public update(model: Model, dirty?: ModelDirty): Promise<void> {
-    return this.managerCallback((manager) =>
+    return this.resolver((manager) =>
       dirty
         ? manager
             .update(model.constructor, { id: model.id }, dirty)
@@ -39,13 +37,13 @@ export class RolsterTypeormEntityDataSource
   }
 
   public delete(model: Model): Promise<void> {
-    return this.managerCallback((manager) =>
+    return this.resolver((manager) =>
       manager.remove(model).then(() => Promise.resolve())
     );
   }
 
   public hidden(model: ModelHidden): Promise<void> {
-    return this.managerCallback((manager) => {
+    return this.resolver((manager) => {
       model.hiddenAt = new Date();
       model.hidden = true;
 
@@ -56,10 +54,10 @@ export class RolsterTypeormEntityDataSource
   }
 
   public procedure(procedure: Procedure): Promise<void> {
-    return this.managerCallback((manager) => procedure.execute(manager));
+    return this.resolver((manager) => procedure.execute(manager));
   }
 
-  private managerCallback(callback: ManagerCallback): Promise<void> {
-    return this.runner ? callback(this.runner.manager) : Promise.resolve();
+  private resolver(resolve: ResolveManager): Promise<void> {
+    return this.runner ? resolve(this.runner.manager) : Promise.resolve();
   }
 }
