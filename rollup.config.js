@@ -1,32 +1,40 @@
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
 
-export default {
-  input: 'dist/esm/index.js',
-  output: [
-    {
-      file: 'dist/cjs/index.js',
-      format: 'cjs',
-      sourcemap: true,
-      inlineDynamicImports: true
-    },
-    {
-      file: 'dist/es/index.js',
-      format: 'es',
-      sourcemap: true,
-      inlineDynamicImports: true
-    }
-  ],
-  external: ['@rolster/helpers-advanced', '@rolster/vinegar', 'typeorm'],
-  plugins: [
-    commonjs(),
-    resolve(),
-    typescript({
-      tsconfig: './tsconfig.json',
-      declaration: true,
-      declarationDir: 'dist',
-      include: ['node_modules/@rolster/types/index.d.ts']
-    })
-  ]
+const plugins = [
+  commonjs(),
+  resolve(),
+  typescript({
+    tsconfig: './tsconfig.json',
+    declaration: true,
+    declarationDir: 'dist',
+    include: ['node_modules/@rolster/types/index.d.ts']
+  })
+];
+
+const rollupTs = (file) => {
+  return {
+    input: [`dist/esm/${file}.js`],
+    output: [
+      {
+        file: `dist/cjs/${file}.js`,
+        format: 'cjs',
+        sourcemap: true,
+        inlineDynamicImports: true
+      },
+      {
+        file: `dist/es/${file}.js`,
+        format: 'es',
+        sourcemap: true,
+        inlineDynamicImports: true
+      }
+    ],
+    external: ['@rolster/helpers-advanced', '@rolster/vinegar', 'typeorm'],
+    plugins
+  };
 };
+
+const exports = ['index'];
+
+export default [...exports.map((file) => rollupTs(file))];
