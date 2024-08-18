@@ -1,7 +1,7 @@
 import { PersistentUnit } from '@rolster/vinegar';
 import { TypeormEntityDatabase } from './database';
 import { TypeormEntityManager } from './entity-manager';
-import { VinegarSql } from './sql-manager';
+import { createRunner } from './sql-manager';
 
 export class TypeormPersistentUnit implements PersistentUnit {
   constructor(
@@ -11,7 +11,7 @@ export class TypeormPersistentUnit implements PersistentUnit {
 
   public async flush(): Promise<void> {
     try {
-      const runner = VinegarSql.createRunner();
+      const runner = createRunner();
 
       if (runner) {
         this.database.setRunner(runner);

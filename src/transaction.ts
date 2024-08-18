@@ -1,12 +1,10 @@
-import { VinegarSql } from './sql-manager';
+import { createRunner } from './sql-manager';
 
 type Callback<T> = () => Promise<T | void>;
 type Result<T> = Promise<T | void>;
 
-export const transaction = async <T = unknown>(
-  callback: Callback<T>
-): Result<T> => {
-  const runner = VinegarSql.createRunner();
+export async function transaction<T = any>(callback: Callback<T>): Result<T> {
+  const runner = createRunner();
 
   if (!runner) {
     return Promise.resolve();
@@ -28,4 +26,4 @@ export const transaction = async <T = unknown>(
   } finally {
     await runner.release();
   }
-};
+}

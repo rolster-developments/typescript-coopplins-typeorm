@@ -1,3 +1,4 @@
+import { voidPromise } from '@rolster/commons';
 import {
   ModelDirty,
   ModelHidden,
@@ -21,25 +22,21 @@ export class RolsterTypeormEntityDataSource implements TypeormEntityDataSource {
   }
 
   public insert(model: Model): Promise<void> {
-    return this.resolver((manager) =>
-      manager.save(model).then(() => Promise.resolve())
-    );
+    return this.resolver((manager) => voidPromise(manager.save(model)));
   }
 
   public update(model: Model, dirty?: ModelDirty): Promise<void> {
     return this.resolver((manager) =>
       dirty
-        ? manager
-            .update(model.constructor, { id: model.id }, dirty)
-            .then(() => Promise.resolve())
-        : manager.save(model).then(() => Promise.resolve())
+        ? voidPromise(
+            manager.update(model.constructor, { id: model.id }, dirty)
+          )
+        : voidPromise(manager.save(model))
     );
   }
 
   public delete(model: Model): Promise<void> {
-    return this.resolver((manager) =>
-      manager.remove(model).then(() => Promise.resolve())
-    );
+    return this.resolver((manager) => voidPromise(manager.remove(model)));
   }
 
   public hidden(model: ModelHidden): Promise<void> {
@@ -47,9 +44,9 @@ export class RolsterTypeormEntityDataSource implements TypeormEntityDataSource {
       model.hiddenAt = new Date();
       model.hidden = true;
 
-      return manager
-        .update(model.constructor, { id: model.id }, model)
-        .then(() => Promise.resolve());
+      return voidPromise(
+        manager.update(model.constructor, { id: model.id }, model)
+      );
     });
   }
 
