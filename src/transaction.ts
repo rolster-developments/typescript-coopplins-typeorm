@@ -1,29 +1,52 @@
-import { createRunner } from './sql-manager';
+import { AbstractTypeormVinegar, getCurrentVinegar } from './typeorm-manager';
 
 type Callback<T> = () => Promise<T | void>;
 type Result<T> = Promise<T | void>;
 
-export async function transaction<T = any>(callback: Callback<T>): Result<T> {
-  const runner = createRunner();
+async function resolveTransaction<T = any>(
+  vinegar: AbstractTypeormVinegar,
+  callback: Callback<T>
+): Result<T> {
+  const queryRunner = vinegar.createQueryRunner();
 
-  if (!runner) {
+  if (!queryRunner) {
     return Promise.resolve();
   }
 
   try {
-    await runner.connect();
-    await runner.startTransaction();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
     const result = await callback();
 
-    await runner.commitTransaction();
+    await queryRunner.commitTransaction();
 
     return result;
   } catch (error) {
-    await runner.rollbackTransaction();
+    await queryRunner.rollbackTransaction();
 
     throw error;
   } finally {
-    await runner.release();
+    await queryRunner.release();
   }
+}
+
+export async function transaction<T = any>(callback: Callback<T>): Result<T>;
+export async function transaction<T = any>(
+  vinegar: AbstractTypeormVinegar,
+  callback: Callback<T>
+): Result<T>;
+export async function transaction<T = any>(
+  vinegar: AbstractTypeormVinegar | Callback<T>,
+  callback?: Callback<T>
+): Result<T> {
+  if (typeof vinegar === 'function') {
+    return resolveTransaction(getCurrentVinegar(), vinegar);
+  }
+
+  if (callback) {
+    return resolveTransaction(vinegar, callback);
+  }
+
+  throw Error('Sorry, we were unable to resolve the database transaction');
 }

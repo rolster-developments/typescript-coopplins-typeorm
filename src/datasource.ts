@@ -1,31 +1,31 @@
 import { voidPromise } from '@rolster/commons';
 import {
-  ModelDirty,
-  ModelHidden,
-  Model,
-  EntityDataSource,
-  Procedure
+  AbstractEntityDataSource,
+  AbstractProcedure,
+  DirtyModel,
+  HiddenModel,
+  Model
 } from '@rolster/vinegar';
 import { EntityManager, QueryRunner } from 'typeorm';
 
-type ResolveManager = (entities: EntityManager) => Promise<void>;
+type Resolver = (entityManager: EntityManager) => Promise<void>;
 
-export abstract class TypeormEntityDataSource extends EntityDataSource {
-  abstract setRunner(runner: QueryRunner): void;
+export abstract class EntityDataSource extends AbstractEntityDataSource {
+  abstract setQueryRunner(queryRunner: QueryRunner): void;
 }
 
-export class RolsterTypeormEntityDataSource implements TypeormEntityDataSource {
-  private runner?: QueryRunner;
+export class TypeormEntityDataSource implements EntityDataSource {
+  private queryRunner?: QueryRunner;
 
-  public setRunner(runner: QueryRunner): void {
-    this.runner = runner;
+  public setQueryRunner(queryRunner: QueryRunner): void {
+    this.queryRunner = queryRunner;
   }
 
   public insert(model: Model): Promise<void> {
     return this.resolver((manager) => voidPromise(manager.save(model)));
   }
 
-  public update(model: Model, dirty?: ModelDirty): Promise<void> {
+  public update(model: Model, dirty?: DirtyModel): Promise<void> {
     return this.resolver((manager) =>
       dirty
         ? voidPromise(
@@ -39,7 +39,7 @@ export class RolsterTypeormEntityDataSource implements TypeormEntityDataSource {
     return this.resolver((manager) => voidPromise(manager.remove(model)));
   }
 
-  public hidden(model: ModelHidden): Promise<void> {
+  public hidden(model: HiddenModel): Promise<void> {
     return this.resolver((manager) => {
       model.hiddenAt = new Date();
       model.hidden = true;
@@ -50,11 +50,11 @@ export class RolsterTypeormEntityDataSource implements TypeormEntityDataSource {
     });
   }
 
-  public procedure(procedure: Procedure): Promise<void> {
+  public procedure(procedure: AbstractProcedure): Promise<void> {
     return this.resolver((manager) => procedure.execute(manager));
   }
 
-  private resolver(resolve: ResolveManager): Promise<void> {
-    return this.runner ? resolve(this.runner.manager) : Promise.resolve();
+  private resolver(resolve: Resolver): Promise<void> {
+    return this.queryRunner ? resolve(this.queryRunner.manager) : Promise.resolve();
   }
 }

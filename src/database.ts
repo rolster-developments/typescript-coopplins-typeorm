@@ -1,40 +1,40 @@
-import { EntityDatabase } from '@rolster/vinegar';
+import { AbstractEntityDatabase } from '@rolster/vinegar';
 import { QueryRunner } from 'typeorm';
 
-type ResolveRunner = (runner: QueryRunner) => Promise<void>;
+type Resolver = (queryRunner: QueryRunner) => Promise<void>;
 
-export abstract class TypeormEntityDatabase extends EntityDatabase {
-  abstract setRunner(runner: QueryRunner): void;
+export abstract class EntityDatabase extends AbstractEntityDatabase {
+  abstract setQueryRunner(queryRunner: QueryRunner): void;
 }
 
-export class RolsterTypeormEntityDatabase implements TypeormEntityDatabase {
-  private runner?: QueryRunner;
+export class TypeormEntityDatabase implements EntityDatabase {
+  private queryRunner?: QueryRunner;
 
-  public setRunner(runner: QueryRunner): void {
-    this.runner = runner;
+  public setQueryRunner(queryRunner: QueryRunner): void {
+    this.queryRunner = queryRunner;
   }
 
   public connect(): Promise<void> {
-    return this.resolver((runner) => runner.connect());
+    return this.resolve((queryRunner) => queryRunner.connect());
   }
 
   public disconnect(_?: boolean): Promise<void> {
-    return this.resolver((runner) => runner.release());
+    return this.resolve((queryRunner) => queryRunner.release());
   }
 
   public transaction(): Promise<void> {
-    return this.resolver((runner) => runner.startTransaction());
+    return this.resolve((queryRunner) => queryRunner.startTransaction());
   }
 
   public commit(): Promise<void> {
-    return this.resolver((runner) => runner.commitTransaction());
+    return this.resolve((queryRunner) => queryRunner.commitTransaction());
   }
 
   public rollback(): Promise<void> {
-    return this.resolver((runner) => runner.rollbackTransaction());
+    return this.resolve((queryRunner) => queryRunner.rollbackTransaction());
   }
 
-  private resolver(resolve: ResolveRunner): Promise<void> {
-    return this.runner ? resolve(this.runner) : Promise.resolve();
+  private resolve(resolver: Resolver): Promise<void> {
+    return this.queryRunner ? resolver(this.queryRunner) : Promise.resolve();
   }
 }

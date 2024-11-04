@@ -1,21 +1,32 @@
-import { PersistentUnit } from '@rolster/vinegar';
-import { TypeormEntityDatabase } from './database';
-import { TypeormEntityManager } from './entity-manager';
-import { createRunner } from './sql-manager';
+import { AbstractPersistentUnit } from '@rolster/vinegar';
+import { EntityDatabase } from './database';
+import { AbstractTypeormEntityManager } from './entity-manager';
+import { AbstractTypeormVinegar, getCurrentVinegar } from './typeorm-manager';
+
+export abstract class PersistentUnit extends AbstractPersistentUnit {
+  abstract setTypeorm(typeorm: AbstractTypeormVinegar): void;
+}
 
 export class TypeormPersistentUnit implements PersistentUnit {
+  private typeorm?: AbstractTypeormVinegar;
+
   constructor(
-    private database: TypeormEntityDatabase,
-    public readonly manager: TypeormEntityManager
+    private database: EntityDatabase,
+    public readonly manager: AbstractTypeormEntityManager
   ) {}
+
+  public setTypeorm(typeorm: AbstractTypeormVinegar): void {
+    this.typeorm = typeorm;
+  }
 
   public async flush(): Promise<void> {
     try {
-      const runner = createRunner();
+      const vinegar = this.typeorm || getCurrentVinegar();
+      const queryRunner = vinegar.createQueryRunner();
 
-      if (runner) {
-        this.database.setRunner(runner);
-        this.manager.setRunner(runner);
+      if (queryRunner) {
+        this.database.setQueryRunner(queryRunner);
+        this.manager.setQueryRunner(queryRunner);
 
         await this.database.connect();
         await this.database.transaction();

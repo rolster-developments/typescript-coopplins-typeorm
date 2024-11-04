@@ -1,20 +1,20 @@
-import { EntityManager, RolsterEntityManager } from '@rolster/vinegar';
+import { AbstractEntityManager, EntityManager } from '@rolster/vinegar';
 import { QueryRunner } from 'typeorm';
-import { TypeormEntityDataSource } from './datasource';
+import { EntityDataSource } from './datasource';
 
-export abstract class TypeormEntityManager extends EntityManager {
-  abstract setRunner(runner: QueryRunner): void;
+export abstract class AbstractTypeormEntityManager extends AbstractEntityManager {
+  abstract setQueryRunner(queryRunner: QueryRunner): void;
 }
 
-export class RolsterTypeormEntityManager
-  extends RolsterEntityManager
-  implements TypeormEntityManager
+export class TypeormEntityManager
+  extends EntityManager
+  implements AbstractTypeormEntityManager
 {
-  constructor(private typeormDataSource: TypeormEntityDataSource) {
-    super(typeormDataSource);
+  constructor(private dataSource: EntityDataSource) {
+    super(dataSource);
   }
 
-  public setRunner(runner: QueryRunner): void {
-    this.typeormDataSource.setRunner(runner);
+  public setQueryRunner(queryRunner: QueryRunner): void {
+    this.dataSource.setQueryRunner(queryRunner);
   }
 }
