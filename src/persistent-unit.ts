@@ -1,6 +1,6 @@
 import { AbstractPersistentUnit } from '@rolster/vinegar';
 import { EntityDatabase } from './database';
-import { AbstractTypeormEntityManager } from './entity-manager';
+import { EntityManager } from './entity-manager';
 import { AbstractTypeormVinegar, getCurrentVinegar } from './typeorm-manager';
 
 export abstract class PersistentUnit extends AbstractPersistentUnit {
@@ -12,7 +12,7 @@ export class TypeormPersistentUnit implements PersistentUnit {
 
   constructor(
     private database: EntityDatabase,
-    public readonly manager: AbstractTypeormEntityManager
+    public readonly manager: EntityManager
   ) {}
 
   public setTypeorm(typeorm: AbstractTypeormVinegar): void {
