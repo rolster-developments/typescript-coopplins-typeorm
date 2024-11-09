@@ -3,8 +3,8 @@ import {
   AbstractEntityDataSource,
   AbstractProcedure,
   DirtyModel,
-  HiddenModel,
-  Model
+  Model,
+  ModelHideable
 } from '@rolster/vinegar';
 import { EntityManager, QueryRunner } from 'typeorm';
 
@@ -39,7 +39,7 @@ export class TypeormEntityDataSource implements EntityDataSource {
     return this.resolver((manager) => voidPromise(manager.remove(model)));
   }
 
-  public hidden(model: HiddenModel): Promise<void> {
+  public hidden(model: ModelHideable): Promise<void> {
     return this.resolver((manager) => {
       model.hiddenAt = new Date();
       model.hidden = true;
@@ -55,6 +55,8 @@ export class TypeormEntityDataSource implements EntityDataSource {
   }
 
   private resolver(resolve: Resolver): Promise<void> {
-    return this.queryRunner ? resolve(this.queryRunner.manager) : Promise.resolve();
+    return this.queryRunner
+      ? resolve(this.queryRunner.manager)
+      : Promise.resolve();
   }
 }
