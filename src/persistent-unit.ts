@@ -8,20 +8,20 @@ export abstract class PersistentUnit extends AbstractPersistentUnit {
 }
 
 export class TypeormPersistentUnit implements PersistentUnit {
-  private typeorm?: AbstractTypeormVinegar;
+  private vinegar?: AbstractTypeormVinegar;
 
   constructor(
     private database: EntityDatabase,
     public readonly manager: EntityManager
   ) {}
 
-  public setTypeorm(typeorm: AbstractTypeormVinegar): void {
-    this.typeorm = typeorm;
+  public setTypeorm(vinegar: AbstractTypeormVinegar): void {
+    this.vinegar = vinegar;
   }
 
   public async flush(): Promise<void> {
     try {
-      const vinegar = this.typeorm || getCurrentVinegar();
+      const vinegar = this.vinegar ?? getCurrentVinegar();
       const queryRunner = vinegar.createQueryRunner();
 
       if (queryRunner) {

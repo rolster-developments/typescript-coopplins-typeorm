@@ -25,7 +25,7 @@ export class TypeormEntityDataSource implements EntityDataSource {
     return this.resolver((manager) => voidPromise(manager.save(model)));
   }
 
-  public update(model: Model, dirty?: DirtyModel): Promise<void> {
+  public refresh(model: Model, dirty?: DirtyModel): Promise<void> {
     return this.resolver((manager) =>
       dirty
         ? voidPromise(
@@ -54,9 +54,7 @@ export class TypeormEntityDataSource implements EntityDataSource {
     return this.resolver((manager) => procedure.execute(manager));
   }
 
-  private resolver(resolve: Resolver): Promise<void> {
-    return this.queryRunner
-      ? resolve(this.queryRunner.manager)
-      : Promise.resolve();
+  private async resolver(resolve: Resolver): Promise<void> {
+    return this.queryRunner && resolve(this.queryRunner.manager);
   }
 }

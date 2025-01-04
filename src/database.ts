@@ -34,7 +34,7 @@ export class TypeormEntityDatabase implements EntityDatabase {
     return this.resolve((queryRunner) => queryRunner.rollbackTransaction());
   }
 
-  private resolve(resolver: Resolver): Promise<void> {
-    return this.queryRunner ? resolver(this.queryRunner) : Promise.resolve();
+  private async resolve(resolver: Resolver): Promise<void> {
+    return this.queryRunner && resolver(this.queryRunner);
   }
 }
